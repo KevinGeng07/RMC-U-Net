@@ -1,6 +1,9 @@
-# RMC-U-Net
+# RMC-U-Nets
 
-### Lightweight recurrent mixed-convolution U-Net<sup>1</sup> leveraging Convolutional Gated Recurrent Unit (GRU)<sup>2</sup> and Long Short-Term Memory (LSTM)<sup>3</sup> head for spatio-temporal feature forecasting and U-Net for spatial refinement.
+### Lightweight recurrent mixed-convolution U-Nets<sup>1</sup> leveraging Convolutional Gated Recurrent Unit (GRU)<sup>2</sup> and Long Short-Term Memory (LSTM)<sup>3</sup> head for spatio-temporal feature forecasting and U-Net for spatial refinement.
+#### Models use a mixture of 2-D, 3-D, and 2-D Depthwise Separable Convolutions. DropBlock and Dropout3D are also included.
+
+![Neural Networks drawn using PlotNeuralNets](images/plot_nets.png)
 
 \[1\] [Ronneberger, O., Fischer, P., & Brox, T. (2015, October). U-net: Convolutional networks for biomedical image segmentation. In International Conference on Medical image computing and computer-assisted intervention (pp. 234-241). Cham: Springer international publishing.](https://link.springer.com/chapter/10.1007/978-3-319-24574-4_28)
 
