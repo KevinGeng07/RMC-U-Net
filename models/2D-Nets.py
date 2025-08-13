@@ -106,11 +106,8 @@ class Time_Skip_2D(nn.Module):
         x = x.permute(2, 0, 1, 3, 4)
         x_output, _ = self.conv_REC(x, seq_len=time_steps)
         x = self.time_skip(x_output)
-        x_static = self.static_modal(
-            x_static[:, -1, :, :, :].view(batch_len, x_static.shape[2], x_static.shape[3], x_static.shape[4]))
-        x = torch.cat([x, x_static], dim=1)
-        x = self.output_conv(x)
-        return x
+        x_static = self.static_modal(x_static[:, -1, :, :, :].view(batch_len, x_static.shape[2], x_static.shape[3], x_static.shape[4]))
+        return self.output_conv(torch.cat([x, x_static], dim=1))
 
 
 class DownSpace_Conv_2D(nn.Module):
@@ -119,14 +116,15 @@ class DownSpace_Conv_2D(nn.Module):
 
         layers = [
             nn.MaxPool2d(kernel_size=stride),
+            
             Feature_Convs_2D(in_channels=in_channels, out_channels=out_channels),
+            
             ops.DropBlock2d(p=0.1, block_size=5)
         ]
         self.downspace_conv = nn.Sequential(*layers)
 
     def forward(self, x):
-        x = self.downspace_conv(x)
-        return x
+        return self.downspace_conv(x)
 
 
 class Bottleneck_Net_2D(nn.Module):
@@ -194,9 +192,7 @@ class Bottleneck_Net_2D(nn.Module):
         x = self.downsample(x)
         x_first = x
         x = self.bottleneck(x)
-        x = x + x_first
-        x = self.upsample(x)
-        return x
+        return self.upsample(x + x_first
 
 
 class UpSpace_Conv_2D(nn.Module):
@@ -227,9 +223,7 @@ class UpSpace_Conv_2D(nn.Module):
         self.upspace_conv = nn.Sequential(*layers)
 
     def forward(self, x_enc, x_dec):
-        x = x_enc + x_dec
-        x = self.upspace_conv(x)
-        return x
+        return self.upspace_conv(x_enc + x_dec)
 
 
 ### GRU/LSTM Networks Using 2-D Autoencoder
