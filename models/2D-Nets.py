@@ -267,6 +267,7 @@ class RMC_2D_Nets(nn.Module):
 
     def init_weights(self):
         for m in self.modules():
+            # Initialize differently based on Network Convolutions versus Recurrent Convolutions.
             if isinstance(m, CGRU_cell) or isinstance(m, CLSTM_cell):
                 m.init_weights()
 
