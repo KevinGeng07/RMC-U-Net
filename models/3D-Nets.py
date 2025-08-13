@@ -234,7 +234,6 @@ class RMC_3D_Nets(nn.Module):
     # H = height
     # W = width
 
-
   def __init__(self, rtype: Union[CGRU_cell, CLSTM_cell]):
     super().__init__()
 
