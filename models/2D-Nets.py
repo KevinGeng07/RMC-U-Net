@@ -237,6 +237,7 @@ class RMC_2D_Nets(nn.Module):
   
     def __init__(self, rtype: Union[CGRU_cell, CLSTM_cell]):
         super().__init__()
+        self.rtype = rtype
 
         self.bichannel = Bichannel_Fusion_2D(main_channels=2, aux_channels=13, out_channels=64)  # (N-1) x 32 x 256 x 256
         self.skip = Time_Skip_2D(input_dim=64, hidden_dim=64, input_shape=256, static_dim=4, rtype=rtype)  # 1 x 64 x 256 x 256
@@ -268,7 +269,7 @@ class RMC_2D_Nets(nn.Module):
     def init_weights(self):
         for m in self.modules():
             # Initialize differently based on Network Convolutions versus Recurrent Convolutions.
-            if isinstance(m, CGRU_cell) or isinstance(m, CLSTM_cell):
+            if isinstance(m, self.rtype):
                 m.init_weights()
 
             elif isinstance(m, torch.nn.Conv2d) or isinstance(m, torch.nn.ConvTranspose2d) or isinstance(m, torch.nn.Conv3d):
