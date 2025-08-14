@@ -9,16 +9,15 @@ class Feature_Convs_2D(nn.Module):
     # Convolutional block purely for spatial extraction.
     def __init__(self, in_channels, out_channels):
         super().__init__()
+        
         if not out_channels:
             out_channels = in_channels
         layers = [
-            nn.Conv2d(in_channels=in_channels, out_channels=(in_channels + out_channels) // 2, kernel_size=3, padding=1,
-                      bias=False),
+            nn.Conv2d(in_channels=in_channels, out_channels=(in_channels + out_channels) // 2, kernel_size=3, padding=1, bias=False),
             nn.BatchNorm2d(num_features=(in_channels + out_channels) // 2),
             nn.PReLU(),
 
-            nn.Conv2d(in_channels=(in_channels + out_channels) // 2, out_channels=out_channels, kernel_size=3,
-                      padding=1, bias=False),
+            nn.Conv2d(in_channels=(in_channels + out_channels) // 2, out_channels=out_channels, kernel_size=3,padding=1, bias=False),
             nn.BatchNorm2d(num_features=out_channels),
             nn.PReLU()
         ]
@@ -30,6 +29,7 @@ class Feature_Convs_2D(nn.Module):
 class Bichannel_Fusion_2D(nn.Module):
     def __init__(self, main_channels, aux_channels, out_channels):
         super().__init__()
+        
         layers_1 = [
             nn.Conv3d(in_channels=main_channels, out_channels=main_channels, kernel_size=3, padding=1, bias=False),
             nn.BatchNorm3d(num_features=main_channels),
@@ -45,8 +45,7 @@ class Bichannel_Fusion_2D(nn.Module):
         self.channel_2 = nn.Sequential(*layers_2)
 
         layers_3 = [
-            nn.Conv3d(in_channels=main_channels + aux_channels, out_channels=out_channels, kernel_size=3, padding=1,
-                      bias=False),
+            nn.Conv3d(in_channels=main_channels + aux_channels, out_channels=out_channels, kernel_size=3, padding=1, bias=False),
             nn.BatchNorm3d(num_features=out_channels),
             nn.PReLU(),
 
@@ -67,14 +66,9 @@ class Bichannel_Fusion_2D(nn.Module):
 class Time_Skip_2D(nn.Module):
     def __init__(self, input_dim, hidden_dim, input_shape, static_dim, rtype):
         super().__init__()
+        
         self.rtype = rtype
-
-        if rtype == CGRU_cell:
-            self.conv_REC = CGRU_cell(shape=(input_shape, input_shape), input_channels=input_dim, filter_size=3,
-                                      num_features=hidden_dim)
-        elif rtype == CLSTM_cell:
-            self.conv_REC = CLSTM_cell(shape=(input_shape, input_shape), input_channels=input_dim, filter_size=3,
-                                       num_features=hidden_dim)
+        self.conv_REC = rtype(shape=(input_shape, input_shape), input_channels=input_dim, filter_size=3, num_features=hidden_dim)
 
         layers = [
             nn.Conv2d(in_channels=hidden_dim, out_channels=input_dim, kernel_size=3, padding=1, bias=False),
@@ -134,8 +128,7 @@ class Bottleneck_Net_2D(nn.Module):
         layers_1 = [
             nn.MaxPool2d(kernel_size=stride),
 
-            nn.Conv2d(in_channels=in_channels, out_channels=in_channels, kernel_size=3, padding=1, bias=False,
-                      groups=in_channels),
+            nn.Conv2d(in_channels=in_channels, out_channels=in_channels, kernel_size=3, padding=1, bias=False, groups=in_channels),
             nn.BatchNorm2d(num_features=in_channels),
             nn.PReLU(),
 
@@ -143,8 +136,7 @@ class Bottleneck_Net_2D(nn.Module):
             nn.BatchNorm2d(num_features=in_channels),
             nn.PReLU(),
 
-            nn.Conv2d(in_channels=in_channels, out_channels=in_channels, kernel_size=3, padding=1, bias=False,
-                      groups=in_channels),
+            nn.Conv2d(in_channels=in_channels, out_channels=in_channels, kernel_size=3, padding=1, bias=False, groups=in_channels),
             nn.BatchNorm2d(num_features=in_channels),
             nn.PReLU(),
 
@@ -161,8 +153,7 @@ class Bottleneck_Net_2D(nn.Module):
             nn.BatchNorm2d(num_features=factor * out_channels),
             nn.PReLU(),
 
-            nn.Conv2d(in_channels=factor * out_channels, out_channels=factor * out_channels, kernel_size=3, padding=1,
-                      bias=False, groups=factor * out_channels),
+            nn.Conv2d(in_channels=factor * out_channels, out_channels=factor * out_channels, kernel_size=3, padding=1, bias=False, groups=factor * out_channels),
             nn.BatchNorm2d(num_features=factor * out_channels),
             nn.PReLU(),
 
@@ -172,8 +163,7 @@ class Bottleneck_Net_2D(nn.Module):
         self.bottleneck = nn.Sequential(*layers_2)
 
         layers_3 = [
-            nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=3, padding=1, bias=False,
-                      groups=out_channels),
+            nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=3, padding=1, bias=False, groups=out_channels),
             nn.BatchNorm2d(num_features=out_channels),
             nn.PReLU(),
 
@@ -181,8 +171,7 @@ class Bottleneck_Net_2D(nn.Module):
             nn.BatchNorm2d(num_features=in_channels),
             nn.PReLU(),
 
-            nn.ConvTranspose2d(in_channels=in_channels, out_channels=in_channels, kernel_size=stride, stride=stride,
-                               bias=False),
+            nn.ConvTranspose2d(in_channels=in_channels, out_channels=in_channels, kernel_size=stride, stride=stride, bias=False),
             nn.BatchNorm2d(num_features=in_channels),
             nn.PReLU()
         ]
@@ -198,8 +187,9 @@ class Bottleneck_Net_2D(nn.Module):
 class UpSpace_Conv_2D(nn.Module):
     def __init__(self, in_channels, out_channels=None, stride=2, last_layer=False):
         super().__init__()
+        
         if not out_channels:
-            out_channels = in_channels
+            out_channels = in_channels    
         layers = [
             Feature_Convs_2D(in_channels=in_channels, out_channels=out_channels),
 
@@ -226,7 +216,7 @@ class UpSpace_Conv_2D(nn.Module):
         return self.upspace_conv(x_enc + x_dec)
 
 
-### GRU/LSTM Networks Using 2-D Autoencoder
+### GRU/LSTM Networks using 2-D Autoencoder
 class RMC_2D_Nets(nn.Module):
     # These networks take in a 5D input (B, T, C, H, W) and forecast a 4D output (B, C, H, W)
     # B = batch_size
@@ -240,7 +230,7 @@ class RMC_2D_Nets(nn.Module):
         self.rtype = rtype
 
         self.bichannel = Bichannel_Fusion_2D(main_channels=2, aux_channels=13, out_channels=64)  # (N-1) x 32 x 256 x 256
-        self.skip = Time_Skip_2D(input_dim=64, hidden_dim=64, input_shape=256, static_dim=4, rtype=rtype)  # 1 x 64 x 256 x 256
+        self.skip = Time_Skip_2D(input_dim=64, hidden_dim=64, input_shape=256, static_dim=4, rtype=self.rtype)  # 1 x 64 x 256 x 256
         self.down_1 = DownSpace_Conv_2D(in_channels=64, out_channels=128, stride=2)  # 1 x 128 x 128 x 128
         self.bottleneck = Bottleneck_Net_2D(in_channels=128, out_channels=256, factor=3, stride=2)  # 1 x (256 -> 768) x 64 x 64
         self.up_1 = UpSpace_Conv_2D(in_channels=128, out_channels=64, stride=2)  # 1 x 128 x 128 x 128
