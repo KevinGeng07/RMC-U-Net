@@ -2,7 +2,7 @@
 
 ### Lightweight recurrent mixed-convolution U-Nets<sup>1</sup> leveraging Convolutional Gated Recurrent Unit (GRU)<sup>2</sup> and Long Short-Term Memory (LSTM)<sup>3</sup> head for spatio-temporal feature forecasting and U-Net for spatial refinement.
 #### Models use a mixture of 2-D and 3-D Convolutions, and 2-D Depthwise Separable Convolutions. DropBlock and Dropout3D are also included.
-#### To use, create a derived class from the 'RMC_2D/3D_Net' base class with 'rtype' set to either the 'CGRU_cell' or 'CLSTM_cell'.
+#### To use, create a derived class from the 'RMC_2D/3D_Net' base class with 'rtype' set to either 'CGRU_cell' or 'CLSTM_cell'.
 
 ![Neural Networks drawn using PlotNeuralNets](images/plot_nets.png)
 
