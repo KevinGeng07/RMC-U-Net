@@ -221,7 +221,7 @@ class UpSpace_Conv_3D(nn.Module):
         self.upspace_conv = nn.Sequential(*layers)
   
     def forward(self, x_enc, x_dec):
-        return self.upspact_conv(x_enc + x_dec)
+        return self.upspace_conv(x_enc + x_dec)
 
 
 ### GRU/LSTM Networks wsing 3-D Autoencoder (w/ 2-D Bottleneck)
