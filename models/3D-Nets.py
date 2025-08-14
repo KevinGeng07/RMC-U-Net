@@ -9,9 +9,9 @@ class Feature_Convs_3D(nn.Module):
     # Convolutional block purely for spatial extraction.
     def __init__(self, in_channels, out_channels):
         super().__init__()
+        
         if not out_channels:
             out_channels = in_channels
-    
         layers = [
             nn.Conv3d(in_channels=in_channels, out_channels=(in_channels + out_channels) // 2, kernel_size=3, padding=1, bias=False),
             nn.BatchNorm3d(num_features=(in_channels + out_channels) // 2),
@@ -224,7 +224,7 @@ class UpSpace_Conv_3D(nn.Module):
         return self.upspact_conv(x_enc + x_dec)
 
 
-### GRU/LSTM Networks Using 3-D Autoencoder
+### GRU/LSTM Networks wsing 3-D Autoencoder (w/ 2-D Bottleneck)
 class RMC_3D_Nets(nn.Module):
     # These networks take in a 5D input (B, T, C, H, W) and forecast a 4D output (B, C, H, W)
     # B = batch_size
@@ -238,7 +238,7 @@ class RMC_3D_Nets(nn.Module):
         self.rytpe = rtype
     
         self.bichannel = Bichannel_Fusion_3D(fire_channels=2, aux_channels=13, out_channels=32) # (N-1) x 32 x 256 x 256
-        self.skip = Time_Skip_3D(input_dim=32, hidden_dim=64, input_shape=256, static_dim=4, rtype=rtype) # 4 x 32 x 256 x 256
+        self.skip = Time_Skip_3D(input_dim=32, hidden_dim=64, input_shape=256, static_dim=4, rtype=self.rtype) # 4 x 32 x 256 x 256
         self.down_1 = DownSpace_Conv_3D(in_channels=32, out_channels=64, stride=2) # 2 x 64 x 128 x 128
         self.bottleneck = Bottleneck_Net_3D(in_channels=64, out_channels=128, factor=6, stride=2) # 1 x (128 -> 768) x 32 x 32
         self.up_1 = UpSpace_Conv_3D(in_channels=64, out_channels=32, stride=2) # 2 x 64 x 128 x 128
